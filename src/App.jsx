@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-// ── Supabase config ──────────────────────────────────────────────
+// ── Supabase ─────────────────────────────────────────────────────
 const SB_URL = "https://czbfofndyunizkswwkzz.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6YmZvZm5keXVuaXprc3d3a3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyMTQyMzYsImV4cCI6MjA5Mzc5MDIzNn0.4_j--y2qrT_clnzR3G73QXUqRc8jQqKRX-z-vgt4H_o";
 
@@ -21,21 +21,22 @@ async function sb(path, opts = {}) {
   } catch { return null; }
 }
 
-// ── App constants ────────────────────────────────────────────────
-const INVITE_CODE = "NCL2026";
-const SHIP = "Norwegian Escape";
-const CRUISE_DATES = "May 24 – 31, 2026";
-const USER_KEY = "cruise-user-v3";
+// ── Constants ────────────────────────────────────────────────────
+const GUEST_CODE    = "NCL2026";
+const ORGANIZER_CODE = "Indigo";
+const SHIP          = "Norwegian Escape";
+const CRUISE_DATES  = "May 24 – 31, 2026";
+const USER_KEY      = "cruise-user-v4";
 
 const ITINERARY = [
-  { day: 1, date: "Sun May 24", port: "Miami, Florida",       note: "Departs 4:00 PM",           emoji: "🌴" },
-  { day: 2, date: "Mon May 25", port: "At Sea",               note: "Full day on the ship",       emoji: "🌊" },
-  { day: 3, date: "Tue May 26", port: "Harvest Caye, Belize", note: "Private island paradise",    emoji: "🏝️" },
-  { day: 4, date: "Wed May 27", port: "Roatán, Honduras",     note: "Coral reefs & jungle",       emoji: "🤿" },
-  { day: 5, date: "Thu May 28", port: "Cozumel, Mexico",      note: "Beaches & ancient ruins",    emoji: "🐠" },
-  { day: 6, date: "Fri May 29", port: "At Sea",               note: "Full day on the ship",       emoji: "🌊" },
-  { day: 7, date: "Sat May 30", port: "At Sea",               note: "Full day on the ship",       emoji: "☀️" },
-  { day: 8, date: "Sun May 31", port: "Miami, Florida",       note: "Arrives — journey ends",     emoji: "🏙️" },
+  { day:1, date:"Sun May 24", port:"Miami, Florida",       note:"Departs 4:00 PM",        emoji:"🌴" },
+  { day:2, date:"Mon May 25", port:"At Sea",               note:"Full day on the ship",    emoji:"🌊" },
+  { day:3, date:"Tue May 26", port:"Harvest Caye, Belize", note:"Private island paradise", emoji:"🏝️" },
+  { day:4, date:"Wed May 27", port:"Roatán, Honduras",     note:"Coral reefs & jungle",    emoji:"🤿" },
+  { day:5, date:"Thu May 28", port:"Cozumel, Mexico",      note:"Beaches & ancient ruins", emoji:"🐠" },
+  { day:6, date:"Fri May 29", port:"At Sea",               note:"Full day on the ship",    emoji:"🌊" },
+  { day:7, date:"Sat May 30", port:"At Sea",               note:"Full day on the ship",    emoji:"☀️" },
+  { day:8, date:"Sun May 31", port:"Miami, Florida",       note:"Arrives — journey ends",  emoji:"🏙️" },
 ];
 
 const MEETUP_SPOTS = [
@@ -46,37 +47,37 @@ const MEETUP_SPOTS = [
 ];
 
 const CHALLENGES_21_PLUS = [
-  { emoji: "🎰", title: "Casino Face",            desc: "Capture your most dramatic reaction at the casino — win or lose. Poker face NOT allowed.", port: null },
-  { emoji: "🍸", title: "Bar Crawl Badge",         desc: "Photo at 5 different bars on the Escape. Something different in hand at each one.", port: null },
-  { emoji: "🌅", title: "Sunrise Club",            desc: "Top deck at sunrise with a drink in hand — Bloody Mary or coffee both count.", port: null },
-  { emoji: "🎤", title: "Karaoke Commit",          desc: "PERFORMING. Not watching, not cheering. Worst song choice wins best photo.", port: null },
-  { emoji: "🫗", title: "First Sip Reaction",      desc: "Order something you've never tried. Someone photographs the exact first sip face.", port: null },
-  { emoji: "🕺", title: "Last One Standing",       desc: "Be the final person from the group on the dance floor. Floor must be clearing around you.", port: null },
-  { emoji: "🌊", title: "Hot Tub After Midnight",  desc: "Spice H2O after 11pm, actual stars visible above. Proof required.", port: null },
-  { emoji: "🥂", title: "Find the Celebration",    desc: "Locate strangers celebrating something — toast with them, get the photo.", port: null },
-  { emoji: "🎲", title: "Superstition Documented", desc: "Show your casino ritual — lucky blow, chip arrangement, whatever. Own it.", port: null },
-  { emoji: "🌺", title: "Harvest Caye Drink",      desc: "First drink you order on the private island, in front of actual Caribbean water.", port: "Harvest Caye" },
-  { emoji: "🐠", title: "Cozumel Cantina",         desc: "Find a local spot in Cozumel off the ship. Order something not in the drink package.", port: "Cozumel" },
-  { emoji: "🤿", title: "Roatán Rum",              desc: "Any rum-based drink in Roatán. Photo must include ocean or jungle in background.", port: "Roatán" },
-  { emoji: "🍾", title: "Most Extra Drink",         desc: "Find the most over-the-top drink on the ship — smoke, fire, umbrella — shoot it like a magazine cover.", port: null },
-  { emoji: "🌙", title: "4AM Evidence",            desc: "Prove you were still going at 4am. No context needed. Timestamp and vibe say everything.", port: null },
+  { emoji:"🎰", title:"Casino Face",            desc:"Capture your most dramatic reaction at the casino — win or lose. Poker face NOT allowed.", port:null },
+  { emoji:"🍸", title:"Bar Crawl Badge",         desc:"Photo at 5 different bars on the Escape. Something different in hand at each one.", port:null },
+  { emoji:"🌅", title:"Sunrise Club",            desc:"Top deck at sunrise with a drink in hand — Bloody Mary or coffee both count.", port:null },
+  { emoji:"🎤", title:"Karaoke Commit",          desc:"PERFORMING. Not watching, not cheering. Worst song choice wins best photo.", port:null },
+  { emoji:"🫗", title:"First Sip Reaction",      desc:"Order something you've never tried. Someone photographs the exact first sip face.", port:null },
+  { emoji:"🕺", title:"Last One Standing",       desc:"Be the final person from the group on the dance floor. Floor must be clearing around you.", port:null },
+  { emoji:"🌊", title:"Hot Tub After Midnight",  desc:"Spice H2O after 11pm, actual stars visible above. Proof required.", port:null },
+  { emoji:"🥂", title:"Find the Celebration",    desc:"Locate strangers celebrating something — toast with them, get the photo.", port:null },
+  { emoji:"🎲", title:"Superstition Documented", desc:"Show your casino ritual — lucky blow, chip arrangement, whatever. Own it.", port:null },
+  { emoji:"🌺", title:"Harvest Caye Drink",      desc:"First drink you order on the private island, in front of actual Caribbean water.", port:"Harvest Caye" },
+  { emoji:"🐠", title:"Cozumel Cantina",         desc:"Find a local spot in Cozumel off the ship. Order something not in the drink package.", port:"Cozumel" },
+  { emoji:"🤿", title:"Roatán Rum",              desc:"Any rum-based drink in Roatán. Photo must include ocean or jungle in background.", port:"Roatán" },
+  { emoji:"🍾", title:"Most Extra Drink",         desc:"Find the most over-the-top drink on the ship — smoke, fire, umbrella — shoot it like a magazine cover.", port:null },
+  { emoji:"🌙", title:"4AM Evidence",            desc:"Prove you were still going at 4am. No context needed. Timestamp and vibe say everything.", port:null },
 ];
 
 const CHALLENGES_UNDER_21 = [
-  { emoji: "💦", title: "Cannonball Championship", desc: "Biggest splash off the pool deck. Mid-air photo required.", port: null },
-  { emoji: "🍹", title: "Mocktail Masterclass",    desc: "Order the most ridiculous-looking mocktail on the ship. Drink package = no limit.", port: null },
-  { emoji: "🍦", title: "Soft Serve Engineering",  desc: "Build the tallest soft serve at Garden Café. Document it standing, then the collapse.", port: null },
-  { emoji: "🐠", title: "Sea Creature Spotter",    desc: "First to photograph a wild sea creature — dolphin, turtle, ray. No aquarium cheating.", port: null },
-  { emoji: "🏆", title: "Beat an Adult",           desc: "Defeat a grown-up at mini golf, shuffleboard, or ping pong. Victory photo required.", port: null },
-  { emoji: "🏝️", title: "Harvest Caye First Splash", desc: "Document the exact moment you hit the water at Harvest Caye private island.", port: "Harvest Caye" },
-  { emoji: "🎠", title: "Highest Legal Point",     desc: "Find the highest accessible point on the Norwegian Escape. Show the ocean below.", port: null },
-  { emoji: "🎯", title: "Arcade Trophy Shot",      desc: "Win any prize from the arcade. Hold it like it's Olympic gold.", port: null },
-  { emoji: "🌄", title: "First Island Sighting",   desc: "Be first in the group to spot land from the deck. Photograph that exact moment.", port: null },
-  { emoji: "🍽️", title: "Buffet Architecture",     desc: "Build the most structurally ambitious plate at Garden Café. Engineering, not eating.", port: null },
-  { emoji: "🤿", title: "Roatán Wildlife Shot",    desc: "Best photo of wild nature in Roatán — reef fish, monkey, tropical bird.", port: "Roatán" },
-  { emoji: "🌊", title: "Wave Timing Master",      desc: "Most dramatic ocean wave shot — spray, scale, power. Screensaver quality only.", port: null },
-  { emoji: "🌟", title: "Real Stars Shot",         desc: "Darkest spot on the Escape at night. Actual stars. No flash. No filter.", port: null },
-  { emoji: "🎭", title: "Reaction Sequence",       desc: "Tell the same joke to 3 different people. Photograph all three reactions in order.", port: null },
+  { emoji:"💦", title:"Cannonball Championship",    desc:"Biggest splash off the pool deck. Mid-air photo required.", port:null },
+  { emoji:"🍹", title:"Mocktail Masterclass",       desc:"Order the most ridiculous-looking mocktail on the ship. Drink package = no limit.", port:null },
+  { emoji:"🍦", title:"Soft Serve Engineering",     desc:"Build the tallest soft serve at Garden Café. Document it standing, then the collapse.", port:null },
+  { emoji:"🐠", title:"Sea Creature Spotter",       desc:"First to photograph a wild sea creature — dolphin, turtle, ray. No aquarium cheating.", port:null },
+  { emoji:"🏆", title:"Beat an Adult",              desc:"Defeat a grown-up at mini golf, shuffleboard, or ping pong. Victory photo required.", port:null },
+  { emoji:"🏝️", title:"Harvest Caye First Splash", desc:"Document the exact moment you hit the water at Harvest Caye private island.", port:"Harvest Caye" },
+  { emoji:"🎠", title:"Highest Legal Point",        desc:"Find the highest accessible point on the Norwegian Escape. Show the ocean below.", port:null },
+  { emoji:"🎯", title:"Arcade Trophy Shot",         desc:"Win any prize from the arcade. Hold it like it's Olympic gold.", port:null },
+  { emoji:"🌄", title:"First Island Sighting",      desc:"Be first in the group to spot land from the deck. Photograph that exact moment.", port:null },
+  { emoji:"🍽️", title:"Buffet Architecture",        desc:"Build the most structurally ambitious plate at Garden Café. Engineering, not eating.", port:null },
+  { emoji:"🤿", title:"Roatán Wildlife Shot",       desc:"Best photo of wild nature in Roatán — reef fish, monkey, tropical bird.", port:"Roatán" },
+  { emoji:"🌊", title:"Wave Timing Master",         desc:"Most dramatic ocean wave shot — spray, scale, power. Screensaver quality only.", port:null },
+  { emoji:"🌟", title:"Real Stars Shot",            desc:"Darkest spot on the Escape at night. Actual stars. No flash. No filter.", port:null },
+  { emoji:"🎭", title:"Reaction Sequence",          desc:"Tell the same joke to 3 different people. Photograph all three reactions in order.", port:null },
 ];
 
 // ── Small components ─────────────────────────────────────────────
@@ -103,39 +104,44 @@ function WaveBar() {
 }
 
 // ── Styles ───────────────────────────────────────────────────────
-const inp     = { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(200,150,62,0.22)", borderRadius:10, padding:"12px 14px", color:"#e8dfc8", fontSize:15, width:"100%", fontFamily:"'Lato',sans-serif", outline:"none", boxSizing:"border-box" };
-const goldBtn = { background:"linear-gradient(135deg,#C8963E,#a07030)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", letterSpacing:"0.04em", fontFamily:"'Lato',sans-serif" };
-const blueBtn = { background:"linear-gradient(135deg,#1a6aaa,#0d4a7a)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
-const redBtn  = { background:"linear-gradient(135deg,#c0392b,#922b21)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
-const ghostBtn= { background:"rgba(255,255,255,0.04)", color:"#8ab0d4", border:"1px solid rgba(200,150,62,0.18)", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
-const cardStyle={ background:"linear-gradient(180deg,#0e1e38 0%,#0a1628 100%)", borderRadius:16, margin:"10px 13px", border:"1px solid rgba(200,150,62,0.12)", overflow:"hidden" };
+const inp      = { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(200,150,62,0.22)", borderRadius:10, padding:"12px 14px", color:"#e8dfc8", fontSize:15, width:"100%", fontFamily:"'Lato',sans-serif", outline:"none", boxSizing:"border-box" };
+const goldBtn  = { background:"linear-gradient(135deg,#C8963E,#a07030)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", letterSpacing:"0.04em", fontFamily:"'Lato',sans-serif" };
+const blueBtn  = { background:"linear-gradient(135deg,#1a6aaa,#0d4a7a)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
+const redBtn   = { background:"linear-gradient(135deg,#c0392b,#922b21)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
+const ghostBtn = { background:"rgba(255,255,255,0.04)", color:"#8ab0d4", border:"1px solid rgba(200,150,62,0.18)", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
+const cardStyle= { background:"linear-gradient(180deg,#0e1e38 0%,#0a1628 100%)", borderRadius:16, margin:"10px 13px", border:"1px solid rgba(200,150,62,0.12)", overflow:"hidden" };
 
 // ── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [screen, setScreen]             = useState("splash");
-  const [user,   setUser]               = useState(null);
-  const [posts,  setPosts]              = useState([]);
-  const [meetup, setMeetup]             = useState(null);
-  const [nameInput, setNameInput]       = useState("");
-  const [codeInput, setCodeInput]       = useState("");
-  const [codeError, setCodeError]       = useState("");
-  const [activeTab, setActiveTab]       = useState("feed");
-  const [caption,   setCaption]         = useState("");
-  const [locationTag, setLocationTag]   = useState("");
-  const [image,  setImage]              = useState(null);
+  const [screen,    setScreen]    = useState("splash");
+  const [joinMode,  setJoinMode]  = useState(null); // "guest" | "organizer"
+  const [codeInput, setCodeInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [user,      setUser]      = useState(null); // { name, role: "organizer"|"guest" }
+
+  const [posts,    setPosts]   = useState([]);
+  const [meetup,   setMeetup]  = useState(null);
+  const [activeTab,setActiveTab] = useState("feed");
+  const [caption,  setCaption]  = useState("");
+  const [locationTag,setLocationTag] = useState("");
+  const [image,    setImage]    = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
   const [expandedPost,  setExpandedPost]  = useState(null);
-  const [locating, setLocating]         = useState(false);
-  const [ageGroup, setAgeGroup]         = useState("21plus");
-  const [spotlight, setSpotlight]       = useState(null);
+  const [locating, setLocating] = useState(false);
+  const [ageGroup, setAgeGroup] = useState("21plus");
+  const [spotlight,setSpotlight]= useState(null);
   const [showMeetupModal, setShowMeetupModal] = useState(false);
-  const [meetupSpot, setMeetupSpot]     = useState(MEETUP_SPOTS[0]);
-  const [meetupNote, setMeetupNote]     = useState("");
-  const [posting, setPosting]           = useState(false);
+  const [meetupSpot, setMeetupSpot] = useState(MEETUP_SPOTS[0]);
+  const [meetupNote, setMeetupNote] = useState("");
+  const [posting,  setPosting]  = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
+
   const fileRef = useRef();
   const pollRef = useRef();
 
   const challenges = ageGroup === "21plus" ? CHALLENGES_21_PLUS : CHALLENGES_UNDER_21;
+  const isOrganizer = user?.role === "organizer";
 
   // ── Init ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -147,13 +153,12 @@ export default function App() {
 
   useEffect(() => {
     if (screen !== "app") return;
-    loadPosts();
-    loadMeetup();
+    loadPosts(); loadMeetup();
     pollRef.current = setInterval(() => { loadPosts(); loadMeetup(); }, 10000);
     return () => clearInterval(pollRef.current);
   }, [screen]);
 
-  // ── Data helpers ────────────────────────────────────────────────
+  // ── Data ────────────────────────────────────────────────────────
   async function loadPosts() {
     const data = await sb("/posts?order=timestamp.desc");
     if (data) setPosts(data);
@@ -164,14 +169,24 @@ export default function App() {
     setMeetup(data && data.length > 0 ? data[0] : null);
   }
 
-  // ── Auth ────────────────────────────────────────────────────────
+  // ── Join ────────────────────────────────────────────────────────
   function handleJoin() {
-    if (codeInput.trim().toUpperCase() !== INVITE_CODE) { setCodeError("Invalid code — ask your organizer!"); return; }
-    if (!nameInput.trim()) { setCodeError("Enter your name first."); return; }
-    const u = { name: nameInput.trim(), joined: new Date().toISOString() };
-    setUser(u);
-    localStorage.setItem(USER_KEY, JSON.stringify(u));
-    setScreen("app");
+    if (!nameInput.trim()) { setCodeError("Please enter a screen name!"); return; }
+    if (joinMode === "organizer") {
+      if (codeInput.trim() !== ORGANIZER_CODE) { setCodeError("Incorrect organizer code."); return; }
+      const u = { name: nameInput.trim(), role: "organizer", joined: new Date().toISOString() };
+      setUser(u); localStorage.setItem(USER_KEY, JSON.stringify(u)); setScreen("app");
+    } else {
+      if (codeInput.trim().toUpperCase() !== GUEST_CODE) { setCodeError("Invalid invite code — ask the organizer!"); return; }
+      const u = { name: nameInput.trim(), role: "guest", joined: new Date().toISOString() };
+      setUser(u); localStorage.setItem(USER_KEY, JSON.stringify(u)); setScreen("app");
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem(USER_KEY);
+    setUser(null); setScreen("join"); setJoinMode(null);
+    setCodeInput(""); setNameInput(""); setCodeError("");
   }
 
   // ── Photo ────────────────────────────────────────────────────────
@@ -182,10 +197,9 @@ export default function App() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
-        const MAX = 1200;
-        let w = img.width, h = img.height;
-        if (w > MAX) { h = (h * MAX) / w; w = MAX; }
-        if (h > MAX) { w = (w * MAX) / h; h = MAX; }
+        const MAX = 1200; let w = img.width, h = img.height;
+        if (w > MAX) { h = (h*MAX)/w; w = MAX; }
+        if (h > MAX) { w = (w*MAX)/h; h = MAX; }
         canvas.width = w; canvas.height = h;
         canvas.getContext("2d").drawImage(img, 0, 0, w, h);
         setImage(canvas.toDataURL("image/jpeg", 0.75));
@@ -207,22 +221,14 @@ export default function App() {
   async function handlePost() {
     if (!image && !caption.trim()) return;
     setPosting(true);
-    await sb("/posts", {
-      method: "POST",
-      body: JSON.stringify({
-        id: Date.now().toString(),
-        author: user.name,
-        caption: caption.trim(),
-        location: locationTag.trim(),
-        image: image || "",
-        timestamp: new Date().toISOString(),
-        likes: [],
-        comments: [],
-      }),
-    });
+    await sb("/posts", { method:"POST", body: JSON.stringify({
+      id: Date.now().toString(), author: user.name,
+      caption: caption.trim(), location: locationTag.trim(),
+      image: image || "", timestamp: new Date().toISOString(),
+      likes: [], comments: [],
+    })});
     setImage(null); setCaption(""); setLocationTag("");
-    setPosting(false); setActiveTab("feed");
-    loadPosts();
+    setPosting(false); setActiveTab("feed"); loadPosts();
   }
 
   async function toggleLike(postId) {
@@ -231,42 +237,53 @@ export default function App() {
       ? post.likes.filter(n => n !== user.name)
       : [...post.likes, user.name];
     setPosts(posts.map(p => p.id === postId ? { ...p, likes: newLikes } : p));
-    await sb(`/posts?id=eq.${postId}`, { method: "PATCH", body: JSON.stringify({ likes: newLikes }) });
+    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body: JSON.stringify({ likes: newLikes }) });
   }
 
   async function addComment(postId) {
-    const text = (commentInputs[postId] || "").trim(); if (!text) return;
+    const text = (commentInputs[postId]||"").trim(); if (!text) return;
     const post = posts.find(p => p.id === postId); if (!post) return;
     const newComments = [...post.comments, { author: user.name, text, time: new Date().toISOString() }];
     setPosts(posts.map(p => p.id === postId ? { ...p, comments: newComments } : p));
-    setCommentInputs(c => ({ ...c, [postId]: "" }));
-    await sb(`/posts?id=eq.${postId}`, { method: "PATCH", body: JSON.stringify({ comments: newComments }) });
+    setCommentInputs(c => ({ ...c, [postId]:"" }));
+    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body: JSON.stringify({ comments: newComments }) });
+  }
+
+  async function deletePost(postId) {
+    if (!isOrganizer) return;
+    await sb(`/posts?id=eq.${postId}`, { method:"DELETE", headers:{ "Prefer":"" } });
+    setPosts(posts.filter(p => p.id !== postId));
   }
 
   async function postMeetup() {
-    await sb("/meetup?active=eq.true", { method: "PATCH", body: JSON.stringify({ active: false }) });
-    await sb("/meetup", {
-      method: "POST",
-      body: JSON.stringify({ spot: meetupSpot, note: meetupNote.trim(), caller: user.name, time: new Date().toISOString(), active: true }),
-    });
-    setShowMeetupModal(false); setMeetupNote("");
-    loadMeetup();
+    await sb("/meetup?active=eq.true", { method:"PATCH", body: JSON.stringify({ active:false }) });
+    await sb("/meetup", { method:"POST", body: JSON.stringify({
+      spot: meetupSpot, note: meetupNote.trim(),
+      caller: user.name, time: new Date().toISOString(), active: true,
+    })});
+    setShowMeetupModal(false); setMeetupNote(""); loadMeetup();
   }
 
   async function clearMeetup() {
-    await sb("/meetup?active=eq.true", { method: "PATCH", body: JSON.stringify({ active: false }) });
+    await sb("/meetup?active=eq.true", { method:"PATCH", body: JSON.stringify({ active:false }) });
     setMeetup(null);
+  }
+
+  async function clearAllPosts() {
+    if (!isOrganizer) return;
+    if (!window.confirm("Delete ALL posts? This cannot be undone.")) return;
+    await sb("/posts?id=neq.NONE", { method:"DELETE", headers:{ "Prefer":"" } });
+    setPosts([]);
   }
 
   const fmt      = iso => new Date(iso).toLocaleDateString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" });
   const fmtShort = iso => new Date(iso).toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
-  const tabStyle = a => ({ flex:1, padding:"11px 0", textAlign:"center", cursor:"pointer", fontSize:11, letterSpacing:"0.07em", textTransform:"uppercase", color: a ? "#C8963E" : "#1a3a5a", background:"none", border:"none", borderBottom:`2px solid ${a ? "#C8963E" : "transparent"}`, transition:"all 0.2s", fontFamily:"'Lato',sans-serif", fontWeight: a ? 700 : 400 });
-
+  const tabStyle = a => ({ flex:1, padding:"11px 0", textAlign:"center", cursor:"pointer", fontSize:11, letterSpacing:"0.07em", textTransform:"uppercase", color: a?"#C8963E":"#1a3a5a", background:"none", border:"none", borderBottom:`2px solid ${a?"#C8963E":"transparent"}`, transition:"all 0.2s", fontFamily:"'Lato',sans-serif", fontWeight: a?700:400 });
   const fonts = <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />;
 
   // ── SPLASH ──────────────────────────────────────────────────────
   if (screen === "splash") return (
-    <div style={{ minHeight:"100vh", background:"#080f1e", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Lato',sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:"#080f1e", display:"flex", alignItems:"center", justifyContent:"center" }}>
       {fonts}
       <div style={{ textAlign:"center" }}>
         <div style={{ fontSize:72 }}>🛳️</div>
@@ -287,17 +304,133 @@ export default function App() {
           <div style={{ fontSize:13, color:"#4a6a8a", marginTop:4, fontStyle:"italic", fontFamily:"'Playfair Display',serif" }}>7-Day Caribbean · Private Group</div>
           <div style={{ fontSize:11, color:"#1a3a5a", marginTop:5, letterSpacing:"0.1em" }}>{CRUISE_DATES}</div>
         </div>
-        <div style={{ background:"rgba(200,150,62,0.06)", border:"1px solid rgba(200,150,62,0.18)", borderRadius:18, padding:24 }}>
+
+        {/* Mode picker */}
+        {!joinMode && (
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <input style={inp} placeholder="Your full name" value={nameInput} onChange={e => setNameInput(e.target.value)} />
-            <input style={{ ...inp, letterSpacing:"0.2em", textTransform:"uppercase" }} placeholder="INVITE CODE"
-              value={codeInput} onChange={e => { setCodeInput(e.target.value); setCodeError(""); }}
-              onKeyDown={e => e.key === "Enter" && handleJoin()} />
-            {codeError && <div style={{ color:"#e07070", fontSize:13, textAlign:"center" }}>{codeError}</div>}
-            <button style={{ ...goldBtn, width:"100%", padding:16, fontSize:15, marginTop:4 }} onClick={handleJoin}>Come Aboard ⚓</button>
+            <button style={{ ...goldBtn, width:"100%", padding:16, fontSize:15 }} onClick={() => setJoinMode("guest")}>
+              🧳 I'm a Guest
+            </button>
+            <button style={{ ...ghostBtn, width:"100%", padding:14, fontSize:14 }} onClick={() => setJoinMode("organizer")}>
+              ⚓ Organizer Login
+            </button>
+          </div>
+        )}
+
+        {/* Guest or Organizer form */}
+        {joinMode && (
+          <div style={{ background:"rgba(200,150,62,0.06)", border:"1px solid rgba(200,150,62,0.18)", borderRadius:18, padding:24 }}>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:"#C8963E", marginBottom:16, textAlign:"center" }}>
+              {joinMode === "guest" ? "🧳 Join as Guest" : "⚓ Organizer Login"}
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <input style={inp} placeholder="Choose a screen name" value={nameInput} onChange={e => setNameInput(e.target.value)} />
+              <input
+                style={{ ...inp, letterSpacing: joinMode==="guest" ? "0.2em" : "0.05em", textTransform: joinMode==="guest" ? "uppercase" : "none" }}
+                placeholder={joinMode === "guest" ? "INVITE CODE" : "Organizer password"}
+                type={joinMode === "organizer" ? "password" : "text"}
+                value={codeInput}
+                onChange={e => { setCodeInput(e.target.value); setCodeError(""); }}
+                onKeyDown={e => e.key === "Enter" && handleJoin()}
+              />
+              {codeError && <div style={{ color:"#e07070", fontSize:13, textAlign:"center" }}>{codeError}</div>}
+              <button style={{ ...goldBtn, width:"100%", padding:16, fontSize:15, marginTop:4 }} onClick={handleJoin}>
+                Come Aboard ⚓
+              </button>
+              <button style={{ background:"none", border:"none", color:"#2a4a6a", fontSize:13, cursor:"pointer", fontFamily:"'Lato',sans-serif", padding:0, textAlign:"center" }}
+                onClick={() => { setJoinMode(null); setCodeInput(""); setNameInput(""); setCodeError(""); }}>
+                ← Back
+              </button>
+            </div>
+          </div>
+        )}
+        <div style={{ textAlign:"center", fontSize:11, color:"#1a3a5a", marginTop:14 }}>
+          {joinMode === "guest" ? "Don't have the code? Ask your trip organizer." : ""}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── ADMIN PANEL ──────────────────────────────────────────────────
+  if (showAdmin) return (
+    <div style={{ minHeight:"100vh", background:"#080f1e", fontFamily:"'Lato',sans-serif", color:"#e8dfc8", maxWidth:480, margin:"0 auto", padding:20 }}>
+      {fonts}
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
+        <button onClick={() => setShowAdmin(false)} style={{ background:"none", border:"none", color:"#C8963E", fontSize:22, cursor:"pointer", padding:0 }}>←</button>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:"#C8963E" }}>⚓ Admin Controls</div>
+      </div>
+
+      <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+
+        {/* Stats */}
+        <div style={{ background:"rgba(200,150,62,0.07)", border:"1px solid rgba(200,150,62,0.18)", borderRadius:14, padding:18 }}>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:12 }}>📊 Current Stats</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+            {[
+              ["Total Posts", posts.length],
+              ["Photos Shared", posts.filter(p=>p.image).length],
+              ["Total Likes", posts.reduce((a,p)=>a+p.likes.length,0)],
+              ["Total Comments", posts.reduce((a,p)=>a+p.comments.length,0)],
+            ].map(([label, val]) => (
+              <div key={label} style={{ background:"rgba(255,255,255,0.04)", borderRadius:10, padding:"12px 14px", textAlign:"center" }}>
+                <div style={{ fontFamily:"'Playfair Display',serif", fontSize:24, color:"#C8963E" }}>{val}</div>
+                <div style={{ fontSize:11, color:"#3a5a7a", marginTop:3 }}>{label}</div>
+              </div>
+            ))}
           </div>
         </div>
-        <div style={{ textAlign:"center", fontSize:11, color:"#1a3a5a", marginTop:14 }}>Don't have the code? Ask your trip organizer.</div>
+
+        {/* Meetup control */}
+        <div style={{ background:"rgba(192,57,43,0.08)", border:"1px solid rgba(192,57,43,0.2)", borderRadius:14, padding:18 }}>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:10 }}>🚨 Meet-Up Alert</div>
+          {meetup ? (
+            <>
+              <div style={{ fontSize:14, color:"#e8dfc8", marginBottom:10 }}>Active: <strong style={{ color:"#e07070" }}>{meetup.spot}</strong></div>
+              <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={clearMeetup}>Clear Alert</button>
+            </>
+          ) : (
+            <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={() => { setShowAdmin(false); setShowMeetupModal(true); }}>
+              📍 Send Meet-Up Alert
+            </button>
+          )}
+        </div>
+
+        {/* Post management */}
+        <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(200,150,62,0.12)", borderRadius:14, padding:18 }}>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:12 }}>🗑️ Post Management</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {posts.slice(0,8).map(post => (
+              <div key={post.id} style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(255,255,255,0.03)", borderRadius:10, padding:"10px 12px" }}>
+                <Avatar name={post.author} size={28} />
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:"#8ab0d4" }}>{post.author}</div>
+                  <div style={{ fontSize:11, color:"#2a4a6a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{post.caption || "(photo)"}</div>
+                </div>
+                <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.2)", border:"1px solid rgba(192,57,43,0.3)", borderRadius:8, color:"#e07070", cursor:"pointer", padding:"5px 10px", fontSize:12, fontFamily:"'Lato',sans-serif" }}>
+                  Delete
+                </button>
+              </div>
+            ))}
+            {posts.length > 8 && <div style={{ fontSize:12, color:"#2a4a6a", textAlign:"center" }}>...and {posts.length - 8} more posts</div>}
+          </div>
+          {posts.length > 0 && (
+            <button style={{ ...redBtn, width:"100%", padding:12, marginTop:14, fontSize:13 }} onClick={clearAllPosts}>
+              🗑️ Delete ALL Posts
+            </button>
+          )}
+        </div>
+
+        {/* Invite info */}
+        <div style={{ background:"rgba(26,106,170,0.08)", border:"1px solid rgba(26,106,170,0.2)", borderRadius:14, padding:18 }}>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:8 }}>🔑 Invite Code</div>
+          <div style={{ fontSize:28, fontFamily:"'Playfair Display',serif", color:"#C8963E", letterSpacing:"0.15em", textAlign:"center", padding:"10px 0" }}>{GUEST_CODE}</div>
+          <div style={{ fontSize:12, color:"#2a4a6a", textAlign:"center" }}>Share this with your group to join the app</div>
+        </div>
+
+        {/* Logout */}
+        <button style={{ ...ghostBtn, width:"100%", padding:14, marginTop:4 }} onClick={handleLogout}>
+          Sign Out
+        </button>
       </div>
     </div>
   );
@@ -318,14 +451,13 @@ export default function App() {
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, maxHeight:220, overflowY:"auto" }}>
                 {MEETUP_SPOTS.map(s => (
                   <button key={s} onClick={() => setMeetupSpot(s)}
-                    style={{ padding:"9px 10px", borderRadius:10, fontSize:12, cursor:"pointer", fontFamily:"'Lato',sans-serif", textAlign:"left", lineHeight:1.3, background: meetupSpot===s ? "linear-gradient(135deg,#C8963E,#a07030)" : "rgba(255,255,255,0.04)", color: meetupSpot===s ? "#fff" : "#5a7a9a", border: meetupSpot===s ? "none" : "1px solid rgba(200,150,62,0.12)" }}>
+                    style={{ padding:"9px 10px", borderRadius:10, fontSize:12, cursor:"pointer", fontFamily:"'Lato',sans-serif", textAlign:"left", lineHeight:1.3, background: meetupSpot===s?"linear-gradient(135deg,#C8963E,#a07030)":"rgba(255,255,255,0.04)", color: meetupSpot===s?"#fff":"#5a7a9a", border: meetupSpot===s?"none":"1px solid rgba(200,150,62,0.12)" }}>
                     {s}
                   </button>
                 ))}
               </div>
             </div>
-            <input style={{ ...inp, marginBottom:14 }} placeholder="Optional note (e.g. 'Grab a drink! 10 mins!')"
-              value={meetupNote} onChange={e => setMeetupNote(e.target.value)} />
+            <input style={{ ...inp, marginBottom:14 }} placeholder="Optional note (e.g. 'Grab a drink! 10 mins!')" value={meetupNote} onChange={e => setMeetupNote(e.target.value)} />
             <div style={{ display:"flex", gap:10 }}>
               <button style={{ ...ghostBtn, flex:1 }} onClick={() => setShowMeetupModal(false)}>Cancel</button>
               <button style={{ ...redBtn, flex:2, padding:"13px 0", fontSize:15 }} onClick={postMeetup}>🚨 Alert the Crew</button>
@@ -341,11 +473,17 @@ export default function App() {
             <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:"#C8963E" }}>🛳️ {SHIP}</div>
             <div style={{ fontSize:10, color:"#1a3a5a", letterSpacing:"0.1em", textTransform:"uppercase", marginTop:1 }}>{CRUISE_DATES}</div>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <button onClick={() => setShowMeetupModal(true)}
               style={{ ...redBtn, padding:"8px 12px", fontSize:12, display:"flex", alignItems:"center", gap:5, animation:"pulse 2s infinite" }}>
               📍 Meet Up!
             </button>
+            {isOrganizer && (
+              <button onClick={() => setShowAdmin(true)}
+                style={{ background:"rgba(200,150,62,0.15)", border:"1px solid rgba(200,150,62,0.3)", borderRadius:10, padding:"8px 10px", color:"#C8963E", fontSize:16, cursor:"pointer" }}>
+                ⚙️
+              </button>
+            )}
             <Avatar name={user.name} size={32} />
           </div>
         </div>
@@ -361,12 +499,12 @@ export default function App() {
             {meetup.note && <div style={{ fontSize:13, color:"#a0b0c0", marginBottom:3 }}>"{meetup.note}"</div>}
             <div style={{ fontSize:11, color:"#4a6a8a" }}>Called by {meetup.caller}</div>
           </div>
-          <button onClick={clearMeetup} style={{ background:"none", border:"none", color:"#3a5a7a", cursor:"pointer", fontSize:18, padding:0 }}>✕</button>
+          {isOrganizer && <button onClick={clearMeetup} style={{ background:"none", border:"none", color:"#3a5a7a", cursor:"pointer", fontSize:18, padding:0 }}>✕</button>}
         </div>
       )}
 
       {/* TABS */}
-      <div style={{ display:"flex", background:"#0b1828", borderBottom:"1px solid rgba(200,150,62,0.1)", marginTop: meetup ? 10 : 0 }}>
+      <div style={{ display:"flex", background:"#0b1828", borderBottom:"1px solid rgba(200,150,62,0.1)", marginTop: meetup?10:0 }}>
         {[["feed","📸 Feed"],["post","➕ Share"],["challenges","🎯 Missions"],["trip","🗺️ Trip"]].map(([id,label]) => (
           <button key={id} style={tabStyle(activeTab===id)} onClick={() => setActiveTab(id)}>{label}</button>
         ))}
@@ -391,15 +529,22 @@ export default function App() {
                   <div style={{ fontWeight:700, fontSize:14, color:"#e8dfc8" }}>{post.author}</div>
                   <div style={{ fontSize:11, color:"#1a3a5a" }}>{fmt(post.timestamp)}</div>
                 </div>
-                {post.location && <div style={{ fontSize:11, color:"#4a6a8a", maxWidth:120, textAlign:"right", lineHeight:1.3 }}>📍 {post.location}</div>}
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  {post.location && <div style={{ fontSize:11, color:"#4a6a8a", maxWidth:100, textAlign:"right", lineHeight:1.3 }}>📍 {post.location}</div>}
+                  {isOrganizer && (
+                    <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.15)", border:"1px solid rgba(192,57,43,0.25)", borderRadius:7, color:"#e07070", cursor:"pointer", padding:"4px 8px", fontSize:11, fontFamily:"'Lato',sans-serif" }}>
+                      🗑️
+                    </button>
+                  )}
+                </div>
               </div>
               {post.image && <img src={post.image} alt="" style={{ width:"100%", maxHeight:380, objectFit:"cover", display:"block" }} />}
               {post.caption && <div style={{ padding:"12px 14px 8px", fontSize:15, lineHeight:1.55, color:"#b0c8e0" }}>{post.caption}</div>}
               <div style={{ display:"flex", gap:18, padding:"8px 14px 13px" }}>
-                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color: post.likes.includes(user.name) ? "#C8963E" : "#1a3a5a", fontSize:20 }} onClick={() => toggleLike(post.id)}>
-                  {post.likes.includes(user.name) ? "❤️" : "🤍"} <span style={{ fontSize:13 }}>{post.likes.length}</span>
+                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color: post.likes.includes(user.name)?"#C8963E":"#1a3a5a", fontSize:20 }} onClick={() => toggleLike(post.id)}>
+                  {post.likes.includes(user.name)?"❤️":"🤍"} <span style={{ fontSize:13 }}>{post.likes.length}</span>
                 </button>
-                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color:"#1a3a5a", fontSize:20 }} onClick={() => setExpandedPost(expandedPost===post.id ? null : post.id)}>
+                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color:"#1a3a5a", fontSize:20 }} onClick={() => setExpandedPost(expandedPost===post.id?null:post.id)}>
                   💬 <span style={{ fontSize:13 }}>{post.comments.length}</span>
                 </button>
               </div>
@@ -438,7 +583,7 @@ export default function App() {
               <div style={{ fontSize:12, color:"#4a6a8a", lineHeight:1.55 }}>{spotlight.desc}</div>
               {spotlight.port && <div style={{ fontSize:11, color:"#2a4a6a", marginTop:5 }}>📍 Port challenge: {spotlight.port}</div>}
               <button style={{ background:"none", border:"none", color:"#1a3a5a", fontSize:12, cursor:"pointer", marginTop:6, padding:0, fontFamily:"'Lato',sans-serif" }}
-                onClick={() => { const p = ageGroup==="21plus" ? CHALLENGES_21_PLUS : CHALLENGES_UNDER_21; setSpotlight(p[Math.floor(Math.random()*p.length)]); }}>
+                onClick={() => { const p=ageGroup==="21plus"?CHALLENGES_21_PLUS:CHALLENGES_UNDER_21; setSpotlight(p[Math.floor(Math.random()*p.length)]); }}>
                 🔀 Swap mission
               </button>
             </div>
@@ -463,7 +608,7 @@ export default function App() {
               <button style={{ ...ghostBtn, padding:"12px 14px", fontSize:18 }} onClick={geoLocate} disabled={locating}>{locating?"…":"📡"}</button>
             </div>
             <button style={{ ...goldBtn, width:"100%", padding:15, fontSize:15, opacity:(!image&&!caption.trim())||posting?0.5:1 }} onClick={handlePost} disabled={(!image&&!caption.trim())||posting}>
-              {posting ? "Sharing…" : "🌊 Share with the Crew"}
+              {posting?"Sharing…":"🌊 Share with the Crew"}
             </button>
           </div>
         </div>
@@ -487,7 +632,7 @@ export default function App() {
                 <div style={{ fontSize:24, lineHeight:1, paddingTop:3, flexShrink:0 }}>{c.emoji}</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:3 }}>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontSize:14, color: ageGroup==="21plus"?"#C8963E":"#4aA0d8" }}>{c.title}</div>
+                    <div style={{ fontFamily:"'Playfair Display',serif", fontSize:14, color:ageGroup==="21plus"?"#C8963E":"#4aA0d8" }}>{c.title}</div>
                     {c.port && <div style={{ fontSize:10, background:"rgba(26,170,106,0.15)", color:"#4aaa7a", borderRadius:99, padding:"2px 7px", letterSpacing:"0.06em", flexShrink:0 }}>{c.port}</div>}
                   </div>
                   <div style={{ fontSize:12, color:"#2a4a6a", lineHeight:1.5 }}>{c.desc}</div>
@@ -527,14 +672,14 @@ export default function App() {
           {ITINERARY.map((stop,i) => (
             <div key={i} style={{ display:"flex", gap:12, marginBottom:10 }}>
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", width:36 }}>
-                <div style={{ width:36, height:36, borderRadius:"50%", background: stop.port==="At Sea"?"rgba(26,106,170,0.2)":"linear-gradient(135deg,rgba(200,150,62,0.3),rgba(200,150,62,0.1))", border:`1px solid ${stop.port==="At Sea"?"rgba(26,106,170,0.3)":"rgba(200,150,62,0.35)"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
+                <div style={{ width:36, height:36, borderRadius:"50%", background:stop.port==="At Sea"?"rgba(26,106,170,0.2)":"linear-gradient(135deg,rgba(200,150,62,0.3),rgba(200,150,62,0.1))", border:`1px solid ${stop.port==="At Sea"?"rgba(26,106,170,0.3)":"rgba(200,150,62,0.35)"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
                   {stop.emoji}
                 </div>
                 {i < ITINERARY.length-1 && <div style={{ width:1, flex:1, minHeight:16, background:"rgba(200,150,62,0.1)", marginTop:4 }} />}
               </div>
               <div style={{ flex:1, paddingBottom:12 }}>
                 <div style={{ display:"flex", alignItems:"baseline", gap:8 }}>
-                  <div style={{ fontFamily:"'Playfair Display',serif", fontSize:15, color: stop.port==="At Sea"?"#4a6aaa":"#e8dfc8" }}>{stop.port}</div>
+                  <div style={{ fontFamily:"'Playfair Display',serif", fontSize:15, color:stop.port==="At Sea"?"#4a6aaa":"#e8dfc8" }}>{stop.port}</div>
                   <div style={{ fontSize:10, color:"#1a3a5a", letterSpacing:"0.08em" }}>Day {stop.day}</div>
                 </div>
                 <div style={{ fontSize:11, color:"#2a4a6a", marginTop:2 }}>{stop.date}</div>
@@ -550,6 +695,9 @@ export default function App() {
               Reservation: <span style={{ color:"#8ab0d4" }}>64629136</span>
             </div>
           </div>
+          <button style={{ ...ghostBtn, width:"100%", padding:13, marginTop:16, fontSize:13 }} onClick={handleLogout}>
+            Sign Out
+          </button>
         </div>
       )}
 
