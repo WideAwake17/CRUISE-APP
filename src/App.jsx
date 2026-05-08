@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
-
+ 
 const supabase = createClient(
   "https://czbfofndyunizkswwkzz.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6YmZvZm5keXVuaXprc3d3a3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyMTQyMzYsImV4cCI6MjA5Mzc5MDIzNn0.4_j--y2qrT_clnzR3G73QXUqRc8jQqKRX-z-vgt4H_o"
 );
-
+ 
 const INVITE_CODE = "NCL2026";
 const SHIP = "Norwegian Escape";
 const CRUISE_DATES = "May 24 – 31, 2026";
 const USER_KEY = "cruise-user-v3";
-
+ 
 const ITINERARY = [
   { day: 1, date: "Sun May 24", port: "Miami, Florida", note: "Departs 4:00 PM", emoji: "🌴" },
   { day: 2, date: "Mon May 25", port: "At Sea", note: "Full day on the ship", emoji: "🌊" },
@@ -21,14 +21,14 @@ const ITINERARY = [
   { day: 7, date: "Sat May 30", port: "At Sea", note: "Full day on the ship", emoji: "☀️" },
   { day: 8, date: "Sun May 31", port: "Miami, Florida", note: "Arrives — journey ends", emoji: "🏙️" },
 ];
-
+ 
 const MEETUP_SPOTS = [
   "Pool Deck (Deck 15)", "Main Bar – Sugarcane", "The Biscayne Bar", "Spice H2O (Adults)",
   "Margaritaville Restaurant", "The Atrium (Deck 6)", "Casino", "Stardust Theater Lobby",
   "Buffet – Garden Café", "Deck 16 Hot Tubs", "Moderno Churrascaria Bar", "Haven Courtyard",
   "Splash Academy Lobby", "O'Sheehan's Bar & Grill", "Headliners Comedy Club",
 ];
-
+ 
 const CHALLENGES_21_PLUS = [
   { emoji: "🎰", title: "Casino Face", desc: "Capture your most dramatic reaction at the casino — win or lose. Poker face NOT allowed.", port: null },
   { emoji: "🍸", title: "Bar Crawl Badge", desc: "Photo at 5 different bars on the Escape. Something different in hand at each one.", port: null },
@@ -45,7 +45,7 @@ const CHALLENGES_21_PLUS = [
   { emoji: "🍾", title: "Most Extra Drink", desc: "Find the most over-the-top drink on the ship — smoke, fire, umbrella — photograph it like a magazine cover.", port: null },
   { emoji: "🌙", title: "4AM Evidence", desc: "Prove you were still going at 4am. No context needed. Timestamp and vibe say everything.", port: null },
 ];
-
+ 
 const CHALLENGES_UNDER_21 = [
   { emoji: "💦", title: "Cannonball Championship", desc: "Biggest splash off the pool deck. Mid-air photo required.", port: null },
   { emoji: "🍹", title: "Mocktail Masterclass", desc: "Order the most ridiculous-looking mocktail or specialty drink. Drink package = no limit.", port: null },
@@ -62,7 +62,7 @@ const CHALLENGES_UNDER_21 = [
   { emoji: "🌟", title: "Real Stars Shot", desc: "Darkest spot on the Escape at night. Actual stars. No flash. No filter.", port: null },
   { emoji: "🎭", title: "Reaction Sequence", desc: "Tell the same joke to 3 different people. Photograph all three reactions in order.", port: null },
 ];
-
+ 
 function Avatar({ name, size = 36 }) {
   const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const colors = ["#C8963E", "#2A5F8F", "#1B4332", "#7B2D8B", "#C0392B", "#16697A"];
@@ -73,7 +73,7 @@ function Avatar({ name, size = 36 }) {
     </div>
   );
 }
-
+ 
 function WaveBar() {
   return (
     <div style={{ overflow: "hidden", lineHeight: 0 }}>
@@ -84,13 +84,13 @@ function WaveBar() {
     </div>
   );
 }
-
+ 
 const inp = { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(200,150,62,0.22)", borderRadius: 10, padding: "12px 14px", color: "#e8dfc8", fontSize: 15, width: "100%", fontFamily: "'Lato', sans-serif", outline: "none", boxSizing: "border-box" };
 const goldBtn = { background: "linear-gradient(135deg,#C8963E,#a07030)", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer", letterSpacing: "0.04em", fontFamily: "'Lato', sans-serif" };
 const blueBtn = { background: "linear-gradient(135deg,#1a6aaa,#0d4a7a)", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Lato', sans-serif" };
 const redBtn = { background: "linear-gradient(135deg,#c0392b,#922b21)", color: "#fff", border: "none", borderRadius: 10, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Lato', sans-serif" };
 const ghostBtn = { background: "rgba(255,255,255,0.04)", color: "#8ab0d4", border: "1px solid rgba(200,150,62,0.18)", borderRadius: 10, padding: "12px 22px", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Lato', sans-serif" };
-
+ 
 export default function App() {
   const [screen, setScreen] = useState("splash");
   const [user, setUser] = useState(null);
@@ -113,41 +113,41 @@ export default function App() {
   const [meetupNote, setMeetupNote] = useState("");
   const [posting, setPosting] = useState(false);
   const fileRef = useRef();
-
+ 
   const challenges = ageGroup === "21plus" ? CHALLENGES_21_PLUS : CHALLENGES_UNDER_21;
-
+ 
   useEffect(() => {
     const su = localStorage.getItem(USER_KEY);
     if (su) setUser(JSON.parse(su));
     setSpotlight(CHALLENGES_21_PLUS[Math.floor(Math.random() * CHALLENGES_21_PLUS.length)]);
     setTimeout(() => setScreen(su ? "app" : "join"), 1600);
   }, []);
-
+ 
   // Load data and subscribe to real-time updates when app screen is shown
   useEffect(() => {
     if (screen !== "app") return;
-
+ 
     loadPosts();
     loadMeetup();
-
+ 
     // Real-time subscription for posts
     const postsSub = supabase
       .channel("posts-channel")
       .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, () => loadPosts())
       .subscribe();
-
+ 
     // Real-time subscription for meetup
     const meetupSub = supabase
       .channel("meetup-channel")
       .on("postgres_changes", { event: "*", schema: "public", table: "meetup" }, () => loadMeetup())
       .subscribe();
-
+ 
     return () => {
       supabase.removeChannel(postsSub);
       supabase.removeChannel(meetupSub);
     };
   }, [screen]);
-
+ 
   async function loadPosts() {
     const { data } = await supabase
       .from("posts")
@@ -155,7 +155,7 @@ export default function App() {
       .order("timestamp", { ascending: false });
     if (data) setPosts(data);
   }
-
+ 
   async function loadMeetup() {
     const { data } = await supabase
       .from("meetup")
@@ -164,7 +164,7 @@ export default function App() {
       .single();
     setMeetup(data || null);
   }
-
+ 
   function handleJoin() {
     if (codeInput.trim().toUpperCase() !== INVITE_CODE) { setCodeError("Invalid code — ask your organizer!"); return; }
     if (!nameInput.trim()) { setCodeError("Enter your name first."); return; }
@@ -173,7 +173,7 @@ export default function App() {
     localStorage.setItem(USER_KEY, JSON.stringify(u));
     setScreen("app");
   }
-
+ 
   function pickImage(e) {
     const file = e.target.files[0]; if (!file) return;
     // Compress image before storing
@@ -194,7 +194,7 @@ export default function App() {
     };
     reader.readAsDataURL(file);
   }
-
+ 
   function geoLocate() {
     setLocating(true);
     if (!navigator.geolocation) { setLocationTag("Unavailable"); setLocating(false); return; }
@@ -203,7 +203,7 @@ export default function App() {
       () => { setLocationTag("Unavailable"); setLocating(false); }
     );
   }
-
+ 
   async function handlePost() {
     if (!image && !caption.trim()) return;
     setPosting(true);
@@ -220,7 +220,7 @@ export default function App() {
     setImage(null); setCaption(""); setLocationTag("");
     setPosting(false); setActiveTab("feed");
   }
-
+ 
   async function toggleLike(postId) {
     const post = posts.find(p => p.id === postId);
     if (!post) return;
@@ -229,7 +229,7 @@ export default function App() {
     await supabase.from("posts").update({ likes: newLikes }).eq("id", postId);
     setPosts(posts.map(p => p.id === postId ? { ...p, likes: newLikes } : p));
   }
-
+ 
   async function addComment(postId) {
     const text = (commentInputs[postId] || "").trim(); if (!text) return;
     const post = posts.find(p => p.id === postId);
@@ -239,7 +239,7 @@ export default function App() {
     setPosts(posts.map(p => p.id === postId ? { ...p, comments: newComments } : p));
     setCommentInputs(c => ({ ...c, [postId]: "" }));
   }
-
+ 
   async function postMeetup() {
     // Clear any existing meetup first
     await supabase.from("meetup").update({ active: false }).eq("active", true);
@@ -253,19 +253,19 @@ export default function App() {
     setShowMeetupModal(false);
     setMeetupNote("");
   }
-
+ 
   async function clearMeetup() {
     await supabase.from("meetup").update({ active: false }).eq("active", true);
     setMeetup(null);
   }
-
+ 
   const fmt = iso => new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
   const fmtShort = iso => new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-
+ 
   const fonts = <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />;
   const cardStyle = { background: "linear-gradient(180deg,#0e1e38 0%,#0a1628 100%)", borderRadius: 16, margin: "10px 13px", border: "1px solid rgba(200,150,62,0.12)", overflow: "hidden" };
   const tabStyle = a => ({ flex: 1, padding: "11px 0", textAlign: "center", cursor: "pointer", fontSize: 11, letterSpacing: "0.07em", textTransform: "uppercase", color: a ? "#C8963E" : "#1a3a5a", background: "none", border: "none", borderBottom: `2px solid ${a ? "#C8963E" : "transparent"}`, transition: "all 0.2s", fontFamily: "'Lato', sans-serif", fontWeight: a ? 700 : 400 });
-
+ 
   // SPLASH
   if (screen === "splash") return (
     <div style={{ minHeight: "100vh", background: "#080f1e", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Lato', sans-serif" }}>
@@ -277,7 +277,7 @@ export default function App() {
       </div>
     </div>
   );
-
+ 
   // JOIN
   if (screen === "join") return (
     <div style={{ minHeight: "100vh", background: "#080f1e", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "'Lato', sans-serif" }}>
@@ -303,12 +303,12 @@ export default function App() {
       </div>
     </div>
   );
-
+ 
   // MAIN APP
   return (
     <div style={{ minHeight: "100vh", background: "#080f1e", fontFamily: "'Lato', sans-serif", color: "#e8dfc8", maxWidth: 480, margin: "0 auto" }}>
       {fonts}
-
+ 
       {/* MEETUP MODAL */}
       {showMeetupModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 300, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
@@ -335,7 +335,7 @@ export default function App() {
           </div>
         </div>
       )}
-
+ 
       {/* HEADER */}
       <div style={{ background: "linear-gradient(135deg,#0b1a32,#162d4a)", borderBottom: "1px solid rgba(200,150,62,0.28)", padding: "12px 16px", position: "sticky", top: 0, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -352,7 +352,7 @@ export default function App() {
           </div>
         </div>
       </div>
-
+ 
       {/* MEETUP BANNER */}
       {meetup && (
         <div style={{ margin: "10px 13px 0", background: "linear-gradient(135deg,rgba(192,57,43,0.2),rgba(192,57,43,0.08))", border: "1px solid rgba(192,57,43,0.5)", borderRadius: 14, padding: "13px 14px", display: "flex", alignItems: "flex-start", gap: 10 }}>
@@ -366,14 +366,14 @@ export default function App() {
           <button onClick={clearMeetup} style={{ background: "none", border: "none", color: "#3a5a7a", cursor: "pointer", fontSize: 18, padding: 0 }}>✕</button>
         </div>
       )}
-
+ 
       {/* TABS */}
       <div style={{ display: "flex", background: "#0b1828", borderBottom: "1px solid rgba(200,150,62,0.1)", marginTop: meetup ? 10 : 0 }}>
         {[["feed","📸 Feed"],["post","➕ Share"],["challenges","🎯 Missions"],["trip","🗺️ Trip"]].map(([id,label]) => (
           <button key={id} style={tabStyle(activeTab === id)} onClick={() => setActiveTab(id)}>{label}</button>
         ))}
       </div>
-
+ 
       {/* FEED */}
       {activeTab === "feed" && (
         <div style={{ paddingBottom: 80 }}>
@@ -428,7 +428,7 @@ export default function App() {
           ))}
         </div>
       )}
-
+ 
       {/* POST */}
       {activeTab === "post" && (
         <div style={{ padding: 16, paddingBottom: 80 }}>
@@ -470,7 +470,7 @@ export default function App() {
           </div>
         </div>
       )}
-
+ 
       {/* CHALLENGES */}
       {activeTab === "challenges" && (
         <div style={{ paddingBottom: 80 }}>
@@ -511,7 +511,7 @@ export default function App() {
           </div>
         </div>
       )}
-
+ 
       {/* TRIP */}
       {activeTab === "trip" && (
         <div style={{ padding: "16px 13px 80px" }}>
@@ -554,7 +554,7 @@ export default function App() {
           </div>
         </div>
       )}
-
+ 
       <style>{`@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,0.4)}50%{box-shadow:0 0 0 6px rgba(192,57,43,0)}}`}</style>
     </div>
   );
