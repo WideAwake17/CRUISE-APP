@@ -1,19 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 
-// ── Supabase ─────────────────────────────────────────────────────
 const SB_URL = "https://czbfofndyunizkswwkzz.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6YmZvZm5keXVuaXprc3d3a3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyMTQyMzYsImV4cCI6MjA5Mzc5MDIzNn0.4_j--y2qrT_clnzR3G73QXUqRc8jQqKRX-z-vgt4H_o";
 
 async function sb(path, opts = {}) {
   try {
     const res = await fetch(`${SB_URL}/rest/v1${path}`, {
-      headers: {
-        "apikey": SB_KEY,
-        "Authorization": `Bearer ${SB_KEY}`,
-        "Content-Type": "application/json",
-        "Prefer": "return=representation",
-        ...(opts.headers || {}),
-      },
+      headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=representation", ...(opts.headers || {}) },
       ...opts,
     });
     const text = await res.text();
@@ -21,12 +14,11 @@ async function sb(path, opts = {}) {
   } catch { return null; }
 }
 
-// ── Constants ────────────────────────────────────────────────────
-const GUEST_CODE    = "NCL2026";
+const GUEST_CODE     = "NCL2026";
 const ORGANIZER_CODE = "Indigo";
-const SHIP          = "Norwegian Escape";
-const CRUISE_DATES  = "May 24 – 31, 2026";
-const USER_KEY      = "cruise-user-v4";
+const SHIP           = "Norwegian Escape";
+const CRUISE_DATES   = "May 24 – 31, 2026";
+const USER_KEY       = "cruise-user-v4";
 
 const ITINERARY = [
   { day:1, date:"Sun May 24", port:"Miami, Florida",       note:"Departs 4:00 PM",        emoji:"🌴" },
@@ -80,13 +72,11 @@ const CHALLENGES_UNDER_21 = [
   { emoji:"🎭", title:"Reaction Sequence",          desc:"Tell the same joke to 3 different people. Photograph all three reactions in order.", port:null },
 ];
 
-// ── Small components ─────────────────────────────────────────────
 function Avatar({ name, size = 36 }) {
   const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   const colors = ["#C8963E","#2A5F8F","#1B4332","#7B2D8B","#C0392B","#16697A"];
-  const color  = colors[name.charCodeAt(0) % colors.length];
   return (
-    <div style={{ width:size, height:size, borderRadius:"50%", background:color, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontWeight:700, fontSize:size*0.38, flexShrink:0, fontFamily:"'Playfair Display',serif", border:"2px solid rgba(200,150,62,0.35)" }}>
+    <div style={{ width:size, height:size, borderRadius:"50%", background:colors[name.charCodeAt(0)%colors.length], display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontWeight:700, fontSize:size*0.38, flexShrink:0, fontFamily:"'Playfair Display',serif", border:"2px solid rgba(200,150,62,0.35)" }}>
       {initials}
     </div>
   );
@@ -103,7 +93,6 @@ function WaveBar() {
   );
 }
 
-// ── Styles ───────────────────────────────────────────────────────
 const inp      = { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(200,150,62,0.22)", borderRadius:10, padding:"12px 14px", color:"#e8dfc8", fontSize:15, width:"100%", fontFamily:"'Lato',sans-serif", outline:"none", boxSizing:"border-box" };
 const goldBtn  = { background:"linear-gradient(135deg,#C8963E,#a07030)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", letterSpacing:"0.04em", fontFamily:"'Lato',sans-serif" };
 const blueBtn  = { background:"linear-gradient(135deg,#1a6aaa,#0d4a7a)", color:"#fff", border:"none", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
@@ -111,39 +100,35 @@ const redBtn   = { background:"linear-gradient(135deg,#c0392b,#922b21)", color:"
 const ghostBtn = { background:"rgba(255,255,255,0.04)", color:"#8ab0d4", border:"1px solid rgba(200,150,62,0.18)", borderRadius:10, padding:"12px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"'Lato',sans-serif" };
 const cardStyle= { background:"linear-gradient(180deg,#0e1e38 0%,#0a1628 100%)", borderRadius:16, margin:"10px 13px", border:"1px solid rgba(200,150,62,0.12)", overflow:"hidden" };
 
-// ── Main App ─────────────────────────────────────────────────────
 export default function App() {
-  const [screen,    setScreen]    = useState("splash");
-  const [joinMode,  setJoinMode]  = useState(null); // "guest" | "organizer"
-  const [codeInput, setCodeInput] = useState("");
-  const [nameInput, setNameInput] = useState("");
-  const [codeError, setCodeError] = useState("");
-  const [user,      setUser]      = useState(null); // { name, role: "organizer"|"guest" }
-
-  const [posts,    setPosts]   = useState([]);
-  const [meetup,   setMeetup]  = useState(null);
-  const [activeTab,setActiveTab] = useState("feed");
-  const [caption,  setCaption]  = useState("");
-  const [locationTag,setLocationTag] = useState("");
-  const [image,    setImage]    = useState(null);
-  const [commentInputs, setCommentInputs] = useState({});
-  const [expandedPost,  setExpandedPost]  = useState(null);
-  const [locating, setLocating] = useState(false);
-  const [ageGroup, setAgeGroup] = useState("21plus");
-  const [spotlight,setSpotlight]= useState(null);
+  const [screen,     setScreen]     = useState("splash");
+  const [joinMode,   setJoinMode]   = useState(null);
+  const [codeInput,  setCodeInput]  = useState("");
+  const [nameInput,  setNameInput]  = useState("");
+  const [codeError,  setCodeError]  = useState("");
+  const [user,       setUser]       = useState(null);
+  const [posts,      setPosts]      = useState([]);
+  const [meetup,     setMeetup]     = useState(null);
+  const [activeTab,  setActiveTab]  = useState("feed");
+  const [caption,    setCaption]    = useState("");
+  const [locationTag,setLocationTag]= useState("");
+  const [image,      setImage]      = useState(null);
+  const [commentInputs,setCommentInputs] = useState({});
+  const [expandedPost, setExpandedPost]  = useState(null);
+  const [locating,   setLocating]   = useState(false);
+  const [ageGroup,   setAgeGroup]   = useState("21plus");
+  const [spotlight,  setSpotlight]  = useState(null);
   const [showMeetupModal, setShowMeetupModal] = useState(false);
   const [meetupSpot, setMeetupSpot] = useState(MEETUP_SPOTS[0]);
   const [meetupNote, setMeetupNote] = useState("");
-  const [posting,  setPosting]  = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
-
+  const [posting,    setPosting]    = useState(false);
+  const [showAdmin,  setShowAdmin]  = useState(false);
   const fileRef = useRef();
   const pollRef = useRef();
 
-  const challenges = ageGroup === "21plus" ? CHALLENGES_21_PLUS : CHALLENGES_UNDER_21;
   const isOrganizer = user?.role === "organizer";
+  const challenges  = ageGroup === "21plus" ? CHALLENGES_21_PLUS : CHALLENGES_UNDER_21;
 
-  // ── Init ────────────────────────────────────────────────────────
   useEffect(() => {
     const su = localStorage.getItem(USER_KEY);
     if (su) setUser(JSON.parse(su));
@@ -158,7 +143,6 @@ export default function App() {
     return () => clearInterval(pollRef.current);
   }, [screen]);
 
-  // ── Data ────────────────────────────────────────────────────────
   async function loadPosts() {
     const data = await sb("/posts?order=timestamp.desc");
     if (data) setPosts(data);
@@ -169,11 +153,10 @@ export default function App() {
     setMeetup(data && data.length > 0 ? data[0] : null);
   }
 
-  // ── Join ────────────────────────────────────────────────────────
   function handleJoin() {
-    if (!nameInput.trim()) { setCodeError("Please enter a screen name!"); return; }
+    if (!nameInput.trim()) { setCodeError("Please choose a screen name!"); return; }
     if (joinMode === "organizer") {
-      if (codeInput.trim() !== ORGANIZER_CODE) { setCodeError("Incorrect organizer code."); return; }
+      if (codeInput.trim() !== ORGANIZER_CODE) { setCodeError("Incorrect organizer password."); return; }
       const u = { name: nameInput.trim(), role: "organizer", joined: new Date().toISOString() };
       setUser(u); localStorage.setItem(USER_KEY, JSON.stringify(u)); setScreen("app");
     } else {
@@ -187,9 +170,9 @@ export default function App() {
     localStorage.removeItem(USER_KEY);
     setUser(null); setScreen("join"); setJoinMode(null);
     setCodeInput(""); setNameInput(""); setCodeError("");
+    setShowAdmin(false); setPosts([]); setMeetup(null);
   }
 
-  // ── Photo ────────────────────────────────────────────────────────
   function pickImage(e) {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
@@ -198,11 +181,11 @@ export default function App() {
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const MAX = 1200; let w = img.width, h = img.height;
-        if (w > MAX) { h = (h*MAX)/w; w = MAX; }
-        if (h > MAX) { w = (w*MAX)/h; h = MAX; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        setImage(canvas.toDataURL("image/jpeg", 0.75));
+        if (w > MAX) { h=(h*MAX)/w; w=MAX; }
+        if (h > MAX) { w=(w*MAX)/h; h=MAX; }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+        setImage(canvas.toDataURL("image/jpeg",0.75));
       };
       img.src = ev.target.result;
     };
@@ -221,64 +204,54 @@ export default function App() {
   async function handlePost() {
     if (!image && !caption.trim()) return;
     setPosting(true);
-    await sb("/posts", { method:"POST", body: JSON.stringify({
-      id: Date.now().toString(), author: user.name,
-      caption: caption.trim(), location: locationTag.trim(),
-      image: image || "", timestamp: new Date().toISOString(),
-      likes: [], comments: [],
-    })});
+    await sb("/posts", { method:"POST", body:JSON.stringify({ id:Date.now().toString(), author:user.name, caption:caption.trim(), location:locationTag.trim(), image:image||"", timestamp:new Date().toISOString(), likes:[], comments:[] }) });
     setImage(null); setCaption(""); setLocationTag("");
     setPosting(false); setActiveTab("feed"); loadPosts();
   }
 
   async function toggleLike(postId) {
-    const post = posts.find(p => p.id === postId); if (!post) return;
-    const newLikes = post.likes.includes(user.name)
-      ? post.likes.filter(n => n !== user.name)
-      : [...post.likes, user.name];
-    setPosts(posts.map(p => p.id === postId ? { ...p, likes: newLikes } : p));
-    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body: JSON.stringify({ likes: newLikes }) });
+    const post = posts.find(p=>p.id===postId); if (!post) return;
+    const newLikes = post.likes.includes(user.name) ? post.likes.filter(n=>n!==user.name) : [...post.likes, user.name];
+    setPosts(posts.map(p=>p.id===postId?{...p,likes:newLikes}:p));
+    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body:JSON.stringify({likes:newLikes}) });
   }
 
   async function addComment(postId) {
     const text = (commentInputs[postId]||"").trim(); if (!text) return;
-    const post = posts.find(p => p.id === postId); if (!post) return;
-    const newComments = [...post.comments, { author: user.name, text, time: new Date().toISOString() }];
-    setPosts(posts.map(p => p.id === postId ? { ...p, comments: newComments } : p));
-    setCommentInputs(c => ({ ...c, [postId]:"" }));
-    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body: JSON.stringify({ comments: newComments }) });
+    const post = posts.find(p=>p.id===postId); if (!post) return;
+    const newComments = [...post.comments, { author:user.name, text, time:new Date().toISOString() }];
+    setPosts(posts.map(p=>p.id===postId?{...p,comments:newComments}:p));
+    setCommentInputs(c=>({...c,[postId]:""}));
+    await sb(`/posts?id=eq.${postId}`, { method:"PATCH", body:JSON.stringify({comments:newComments}) });
   }
 
   async function deletePost(postId) {
     if (!isOrganizer) return;
-    await sb(`/posts?id=eq.${postId}`, { method:"DELETE", headers:{ "Prefer":"" } });
-    setPosts(posts.filter(p => p.id !== postId));
+    await sb(`/posts?id=eq.${postId}`, { method:"DELETE", headers:{"Prefer":""} });
+    setPosts(posts.filter(p=>p.id!==postId));
   }
 
   async function postMeetup() {
-    await sb("/meetup?active=eq.true", { method:"PATCH", body: JSON.stringify({ active:false }) });
-    await sb("/meetup", { method:"POST", body: JSON.stringify({
-      spot: meetupSpot, note: meetupNote.trim(),
-      caller: user.name, time: new Date().toISOString(), active: true,
-    })});
+    await sb("/meetup?active=eq.true", { method:"PATCH", body:JSON.stringify({active:false}) });
+    await sb("/meetup", { method:"POST", body:JSON.stringify({ spot:meetupSpot, note:meetupNote.trim(), caller:user.name, time:new Date().toISOString(), active:true }) });
     setShowMeetupModal(false); setMeetupNote(""); loadMeetup();
   }
 
   async function clearMeetup() {
-    await sb("/meetup?active=eq.true", { method:"PATCH", body: JSON.stringify({ active:false }) });
+    await sb("/meetup?active=eq.true", { method:"PATCH", body:JSON.stringify({active:false}) });
     setMeetup(null);
   }
 
   async function clearAllPosts() {
     if (!isOrganizer) return;
     if (!window.confirm("Delete ALL posts? This cannot be undone.")) return;
-    await sb("/posts?id=neq.NONE", { method:"DELETE", headers:{ "Prefer":"" } });
+    await sb("/posts?id=neq.NONE", { method:"DELETE", headers:{"Prefer":""} });
     setPosts([]);
   }
 
-  const fmt      = iso => new Date(iso).toLocaleDateString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit" });
-  const fmtShort = iso => new Date(iso).toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
-  const tabStyle = a => ({ flex:1, padding:"11px 0", textAlign:"center", cursor:"pointer", fontSize:11, letterSpacing:"0.07em", textTransform:"uppercase", color: a?"#C8963E":"#1a3a5a", background:"none", border:"none", borderBottom:`2px solid ${a?"#C8963E":"transparent"}`, transition:"all 0.2s", fontFamily:"'Lato',sans-serif", fontWeight: a?700:400 });
+  const fmt      = iso => new Date(iso).toLocaleDateString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  const fmtShort = iso => new Date(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  const tabStyle = a => ({ flex:1, padding:"11px 0", textAlign:"center", cursor:"pointer", fontSize:11, letterSpacing:"0.07em", textTransform:"uppercase", color:a?"#C8963E":"#1a3a5a", background:"none", border:"none", borderBottom:`2px solid ${a?"#C8963E":"transparent"}`, transition:"all 0.2s", fontFamily:"'Lato',sans-serif", fontWeight:a?700:400 });
   const fonts = <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />;
 
   // ── SPLASH ──────────────────────────────────────────────────────
@@ -308,8 +281,8 @@ export default function App() {
         {/* Mode picker */}
         {!joinMode && (
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <button style={{ ...goldBtn, width:"100%", padding:16, fontSize:15 }} onClick={() => setJoinMode("guest")}>
-              🧳 I'm a Guest
+            <button style={{ ...goldBtn, width:"100%", padding:18, fontSize:16 }} onClick={() => setJoinMode("guest")}>
+              🧳 Join as Guest
             </button>
             <button style={{ ...ghostBtn, width:"100%", padding:14, fontSize:14 }} onClick={() => setJoinMode("organizer")}>
               ⚓ Organizer Login
@@ -317,7 +290,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Guest or Organizer form */}
+        {/* Form */}
         {joinMode && (
           <div style={{ background:"rgba(200,150,62,0.06)", border:"1px solid rgba(200,150,62,0.18)", borderRadius:18, padding:24 }}>
             <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:"#C8963E", marginBottom:16, textAlign:"center" }}>
@@ -326,27 +299,37 @@ export default function App() {
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <input style={inp} placeholder="Choose a screen name" value={nameInput} onChange={e => setNameInput(e.target.value)} />
               <input
-                style={{ ...inp, letterSpacing: joinMode==="guest" ? "0.2em" : "0.05em", textTransform: joinMode==="guest" ? "uppercase" : "none" }}
-                placeholder={joinMode === "guest" ? "INVITE CODE" : "Organizer password"}
-                type={joinMode === "organizer" ? "password" : "text"}
+                style={{ ...inp, letterSpacing:joinMode==="guest"?"0.15em":"0.05em", textTransform:joinMode==="guest"?"uppercase":"none" }}
+                placeholder={joinMode==="guest" ? "INVITE CODE" : "Organizer password"}
+                type={joinMode==="organizer" ? "password" : "text"}
                 value={codeInput}
                 onChange={e => { setCodeInput(e.target.value); setCodeError(""); }}
-                onKeyDown={e => e.key === "Enter" && handleJoin()}
+                onKeyDown={e => e.key==="Enter" && handleJoin()}
               />
               {codeError && <div style={{ color:"#e07070", fontSize:13, textAlign:"center" }}>{codeError}</div>}
               <button style={{ ...goldBtn, width:"100%", padding:16, fontSize:15, marginTop:4 }} onClick={handleJoin}>
                 Come Aboard ⚓
               </button>
-              <button style={{ background:"none", border:"none", color:"#2a4a6a", fontSize:13, cursor:"pointer", fontFamily:"'Lato',sans-serif", padding:0, textAlign:"center" }}
+              <button style={{ background:"none", border:"none", color:"#2a4a6a", fontSize:13, cursor:"pointer", fontFamily:"'Lato',sans-serif", padding:0, textAlign:"center", marginTop:4 }}
                 onClick={() => { setJoinMode(null); setCodeInput(""); setNameInput(""); setCodeError(""); }}>
                 ← Back
               </button>
             </div>
           </div>
         )}
-        <div style={{ textAlign:"center", fontSize:11, color:"#1a3a5a", marginTop:14 }}>
-          {joinMode === "guest" ? "Don't have the code? Ask your trip organizer." : ""}
-        </div>
+        {joinMode === "guest" && (
+          <div style={{ textAlign:"center", marginTop:16 }}>
+            <button style={{ background:"none", border:"none", color:"#1a3a5a", fontSize:12, cursor:"pointer", fontFamily:"'Lato',sans-serif" }}
+              onClick={() => { setJoinMode("organizer"); setCodeInput(""); setCodeError(""); }}>
+              Are you the organizer? Login here →
+            </button>
+          </div>
+        )}
+        {!joinMode && (
+          <div style={{ textAlign:"center", fontSize:11, color:"#1a3a5a", marginTop:16 }}>
+            Need an invite code? Ask your trip organizer.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -359,19 +342,13 @@ export default function App() {
         <button onClick={() => setShowAdmin(false)} style={{ background:"none", border:"none", color:"#C8963E", fontSize:22, cursor:"pointer", padding:0 }}>←</button>
         <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:"#C8963E" }}>⚓ Admin Controls</div>
       </div>
-
       <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
 
         {/* Stats */}
         <div style={{ background:"rgba(200,150,62,0.07)", border:"1px solid rgba(200,150,62,0.18)", borderRadius:14, padding:18 }}>
-          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:12 }}>📊 Current Stats</div>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:12 }}>📊 Stats</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
-            {[
-              ["Total Posts", posts.length],
-              ["Photos Shared", posts.filter(p=>p.image).length],
-              ["Total Likes", posts.reduce((a,p)=>a+p.likes.length,0)],
-              ["Total Comments", posts.reduce((a,p)=>a+p.comments.length,0)],
-            ].map(([label, val]) => (
+            {[["Total Posts",posts.length],["Photos",posts.filter(p=>p.image).length],["Likes",posts.reduce((a,p)=>a+p.likes.length,0)],["Comments",posts.reduce((a,p)=>a+p.comments.length,0)]].map(([label,val])=>(
               <div key={label} style={{ background:"rgba(255,255,255,0.04)", borderRadius:10, padding:"12px 14px", textAlign:"center" }}>
                 <div style={{ fontFamily:"'Playfair Display',serif", fontSize:24, color:"#C8963E" }}>{val}</div>
                 <div style={{ fontSize:11, color:"#3a5a7a", marginTop:3 }}>{label}</div>
@@ -380,56 +357,46 @@ export default function App() {
           </div>
         </div>
 
-        {/* Meetup control */}
+        {/* Meetup */}
         <div style={{ background:"rgba(192,57,43,0.08)", border:"1px solid rgba(192,57,43,0.2)", borderRadius:14, padding:18 }}>
-          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:10 }}>🚨 Meet-Up Alert</div>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:10 }}>🚨 Meet-Up</div>
           {meetup ? (
-            <>
-              <div style={{ fontSize:14, color:"#e8dfc8", marginBottom:10 }}>Active: <strong style={{ color:"#e07070" }}>{meetup.spot}</strong></div>
-              <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={clearMeetup}>Clear Alert</button>
-            </>
+            <><div style={{ fontSize:14, color:"#e8dfc8", marginBottom:10 }}>Active: <strong style={{ color:"#e07070" }}>{meetup.spot}</strong></div>
+            <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={clearMeetup}>Clear Alert</button></>
           ) : (
-            <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={() => { setShowAdmin(false); setShowMeetupModal(true); }}>
-              📍 Send Meet-Up Alert
-            </button>
+            <button style={{ ...redBtn, width:"100%", padding:12 }} onClick={() => { setShowAdmin(false); setShowMeetupModal(true); }}>📍 Send Meet-Up Alert</button>
           )}
         </div>
 
-        {/* Post management */}
+        {/* Posts */}
         <div style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(200,150,62,0.12)", borderRadius:14, padding:18 }}>
           <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:12 }}>🗑️ Post Management</div>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-            {posts.slice(0,8).map(post => (
+            {posts.slice(0,8).map(post=>(
               <div key={post.id} style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(255,255,255,0.03)", borderRadius:10, padding:"10px 12px" }}>
                 <Avatar name={post.author} size={28} />
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:12, fontWeight:700, color:"#8ab0d4" }}>{post.author}</div>
-                  <div style={{ fontSize:11, color:"#2a4a6a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{post.caption || "(photo)"}</div>
+                  <div style={{ fontSize:11, color:"#2a4a6a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{post.caption||"(photo)"}</div>
                 </div>
-                <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.2)", border:"1px solid rgba(192,57,43,0.3)", borderRadius:8, color:"#e07070", cursor:"pointer", padding:"5px 10px", fontSize:12, fontFamily:"'Lato',sans-serif" }}>
-                  Delete
-                </button>
+                <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.2)", border:"1px solid rgba(192,57,43,0.3)", borderRadius:8, color:"#e07070", cursor:"pointer", padding:"5px 10px", fontSize:12, fontFamily:"'Lato',sans-serif" }}>Delete</button>
               </div>
             ))}
-            {posts.length > 8 && <div style={{ fontSize:12, color:"#2a4a6a", textAlign:"center" }}>...and {posts.length - 8} more posts</div>}
+            {posts.length > 8 && <div style={{ fontSize:12, color:"#2a4a6a", textAlign:"center" }}>...and {posts.length-8} more</div>}
           </div>
-          {posts.length > 0 && (
-            <button style={{ ...redBtn, width:"100%", padding:12, marginTop:14, fontSize:13 }} onClick={clearAllPosts}>
-              🗑️ Delete ALL Posts
-            </button>
-          )}
+          {posts.length > 0 && <button style={{ ...redBtn, width:"100%", padding:12, marginTop:14, fontSize:13 }} onClick={clearAllPosts}>🗑️ Delete ALL Posts</button>}
         </div>
 
-        {/* Invite info */}
-        <div style={{ background:"rgba(26,106,170,0.08)", border:"1px solid rgba(26,106,170,0.2)", borderRadius:14, padding:18 }}>
-          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:8 }}>🔑 Invite Code</div>
-          <div style={{ fontSize:28, fontFamily:"'Playfair Display',serif", color:"#C8963E", letterSpacing:"0.15em", textAlign:"center", padding:"10px 0" }}>{GUEST_CODE}</div>
-          <div style={{ fontSize:12, color:"#2a4a6a", textAlign:"center" }}>Share this with your group to join the app</div>
+        {/* Invite code */}
+        <div style={{ background:"rgba(26,106,170,0.08)", border:"1px solid rgba(26,106,170,0.2)", borderRadius:14, padding:18, textAlign:"center" }}>
+          <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:8 }}>🔑 Guest Invite Code</div>
+          <div style={{ fontSize:30, fontFamily:"'Playfair Display',serif", color:"#C8963E", letterSpacing:"0.15em", padding:"10px 0" }}>{GUEST_CODE}</div>
+          <div style={{ fontSize:12, color:"#2a4a6a" }}>Share this with your group</div>
         </div>
 
-        {/* Logout */}
-        <button style={{ ...ghostBtn, width:"100%", padding:14, marginTop:4 }} onClick={handleLogout}>
-          Sign Out
+        {/* Sign out */}
+        <button style={{ ...redBtn, width:"100%", padding:14, marginTop:4 }} onClick={handleLogout}>
+          🚪 Sign Out
         </button>
       </div>
     </div>
@@ -449,9 +416,9 @@ export default function App() {
             <div style={{ marginBottom:14 }}>
               <div style={{ fontSize:11, color:"#3a5a7a", letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:8 }}>Pick a spot</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, maxHeight:220, overflowY:"auto" }}>
-                {MEETUP_SPOTS.map(s => (
+                {MEETUP_SPOTS.map(s=>(
                   <button key={s} onClick={() => setMeetupSpot(s)}
-                    style={{ padding:"9px 10px", borderRadius:10, fontSize:12, cursor:"pointer", fontFamily:"'Lato',sans-serif", textAlign:"left", lineHeight:1.3, background: meetupSpot===s?"linear-gradient(135deg,#C8963E,#a07030)":"rgba(255,255,255,0.04)", color: meetupSpot===s?"#fff":"#5a7a9a", border: meetupSpot===s?"none":"1px solid rgba(200,150,62,0.12)" }}>
+                    style={{ padding:"9px 10px", borderRadius:10, fontSize:12, cursor:"pointer", fontFamily:"'Lato',sans-serif", textAlign:"left", lineHeight:1.3, background:meetupSpot===s?"linear-gradient(135deg,#C8963E,#a07030)":"rgba(255,255,255,0.04)", color:meetupSpot===s?"#fff":"#5a7a9a", border:meetupSpot===s?"none":"1px solid rgba(200,150,62,0.12)" }}>
                     {s}
                   </button>
                 ))}
@@ -484,7 +451,12 @@ export default function App() {
                 ⚙️
               </button>
             )}
-            <Avatar name={user.name} size={32} />
+            {/* SIGN OUT — always visible */}
+            <button onClick={handleLogout}
+              title="Sign out"
+              style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"8px 10px", color:"#4a6a8a", fontSize:15, cursor:"pointer", display:"flex", alignItems:"center" }}>
+              🚪
+            </button>
           </div>
         </div>
       </div>
@@ -504,13 +476,13 @@ export default function App() {
       )}
 
       {/* TABS */}
-      <div style={{ display:"flex", background:"#0b1828", borderBottom:"1px solid rgba(200,150,62,0.1)", marginTop: meetup?10:0 }}>
-        {[["feed","📸 Feed"],["post","➕ Share"],["challenges","🎯 Missions"],["trip","🗺️ Trip"]].map(([id,label]) => (
+      <div style={{ display:"flex", background:"#0b1828", borderBottom:"1px solid rgba(200,150,62,0.1)", marginTop:meetup?10:0 }}>
+        {[["feed","📸 Feed"],["post","➕ Share"],["challenges","🎯 Missions"],["trip","🗺️ Trip"]].map(([id,label])=>(
           <button key={id} style={tabStyle(activeTab===id)} onClick={() => setActiveTab(id)}>{label}</button>
         ))}
       </div>
 
-      {/* ── FEED ─────────────────────────────────────────────────── */}
+      {/* FEED */}
       {activeTab === "feed" && (
         <div style={{ paddingBottom:80 }}>
           {posts.length === 0 && (
@@ -521,7 +493,7 @@ export default function App() {
               <button style={{ ...goldBtn, marginTop:20 }} onClick={() => setActiveTab("post")}>Share First 📸</button>
             </div>
           )}
-          {posts.map(post => (
+          {posts.map(post=>(
             <div key={post.id} style={cardStyle}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px" }}>
                 <Avatar name={post.author} />
@@ -532,16 +504,14 @@ export default function App() {
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   {post.location && <div style={{ fontSize:11, color:"#4a6a8a", maxWidth:100, textAlign:"right", lineHeight:1.3 }}>📍 {post.location}</div>}
                   {isOrganizer && (
-                    <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.15)", border:"1px solid rgba(192,57,43,0.25)", borderRadius:7, color:"#e07070", cursor:"pointer", padding:"4px 8px", fontSize:11, fontFamily:"'Lato',sans-serif" }}>
-                      🗑️
-                    </button>
+                    <button onClick={() => deletePost(post.id)} style={{ background:"rgba(192,57,43,0.15)", border:"1px solid rgba(192,57,43,0.25)", borderRadius:7, color:"#e07070", cursor:"pointer", padding:"4px 8px", fontSize:11, fontFamily:"'Lato',sans-serif" }}>🗑️</button>
                   )}
                 </div>
               </div>
               {post.image && <img src={post.image} alt="" style={{ width:"100%", maxHeight:380, objectFit:"cover", display:"block" }} />}
               {post.caption && <div style={{ padding:"12px 14px 8px", fontSize:15, lineHeight:1.55, color:"#b0c8e0" }}>{post.caption}</div>}
               <div style={{ display:"flex", gap:18, padding:"8px 14px 13px" }}>
-                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color: post.likes.includes(user.name)?"#C8963E":"#1a3a5a", fontSize:20 }} onClick={() => toggleLike(post.id)}>
+                <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color:post.likes.includes(user.name)?"#C8963E":"#1a3a5a", fontSize:20 }} onClick={() => toggleLike(post.id)}>
                   {post.likes.includes(user.name)?"❤️":"🤍"} <span style={{ fontSize:13 }}>{post.likes.length}</span>
                 </button>
                 <button style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", gap:5, padding:0, color:"#1a3a5a", fontSize:20 }} onClick={() => setExpandedPost(expandedPost===post.id?null:post.id)}>
@@ -550,7 +520,7 @@ export default function App() {
               </div>
               {expandedPost === post.id && (
                 <div style={{ borderTop:"1px solid rgba(200,150,62,0.09)", padding:"12px 14px" }}>
-                  {post.comments.map((c,i) => (
+                  {post.comments.map((c,i)=>(
                     <div key={i} style={{ display:"flex", gap:8, marginBottom:10 }}>
                       <Avatar name={c.author} size={28} />
                       <div style={{ background:"rgba(255,255,255,0.04)", borderRadius:10, padding:"7px 12px", flex:1 }}>
@@ -561,7 +531,7 @@ export default function App() {
                   ))}
                   <div style={{ display:"flex", gap:8, marginTop:6 }}>
                     <input style={{ ...inp, fontSize:13, padding:"8px 12px", flex:1 }} placeholder="Add a comment…"
-                      value={commentInputs[post.id]||""} onChange={e => setCommentInputs(c => ({ ...c, [post.id]:e.target.value }))}
+                      value={commentInputs[post.id]||""} onChange={e => setCommentInputs(c=>({...c,[post.id]:e.target.value}))}
                       onKeyDown={e => e.key==="Enter" && addComment(post.id)} />
                     <button style={{ ...goldBtn, padding:"8px 14px" }} onClick={() => addComment(post.id)}>➤</button>
                   </div>
@@ -572,7 +542,7 @@ export default function App() {
         </div>
       )}
 
-      {/* ── POST ─────────────────────────────────────────────────── */}
+      {/* POST */}
       {activeTab === "post" && (
         <div style={{ padding:16, paddingBottom:80 }}>
           {spotlight && (
@@ -614,7 +584,7 @@ export default function App() {
         </div>
       )}
 
-      {/* ── CHALLENGES ───────────────────────────────────────────── */}
+      {/* CHALLENGES */}
       {activeTab === "challenges" && (
         <div style={{ paddingBottom:80 }}>
           <div style={{ padding:"18px 16px 8px", textAlign:"center" }}>
@@ -627,7 +597,7 @@ export default function App() {
           </div>
           <WaveBar />
           <div style={{ padding:"0 13px", display:"flex", flexDirection:"column", gap:9 }}>
-            {challenges.map((c,i) => (
+            {challenges.map((c,i)=>(
               <div key={i} style={{ background:"linear-gradient(135deg,#0e1e38,#0a1628)", border:`1px solid ${c.port?"rgba(26,170,106,0.22)":(ageGroup==="21plus"?"rgba(200,150,62,0.13)":"rgba(26,106,170,0.17)")}`, borderRadius:14, padding:"12px 12px", display:"flex", gap:10, alignItems:"flex-start" }}>
                 <div style={{ fontSize:24, lineHeight:1, paddingTop:3, flexShrink:0 }}>{c.emoji}</div>
                 <div style={{ flex:1, minWidth:0 }}>
@@ -655,7 +625,7 @@ export default function App() {
         </div>
       )}
 
-      {/* ── TRIP ─────────────────────────────────────────────────── */}
+      {/* TRIP */}
       {activeTab === "trip" && (
         <div style={{ padding:"16px 13px 80px" }}>
           <div style={{ textAlign:"center", marginBottom:18 }}>
@@ -669,7 +639,7 @@ export default function App() {
               <strong style={{ color:"#C8963E" }}>Adults (21+)</strong> — full open bar included. All covered.
             </div>
           </div>
-          {ITINERARY.map((stop,i) => (
+          {ITINERARY.map((stop,i)=>(
             <div key={i} style={{ display:"flex", gap:12, marginBottom:10 }}>
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", width:36 }}>
                 <div style={{ width:36, height:36, borderRadius:"50%", background:stop.port==="At Sea"?"rgba(26,106,170,0.2)":"linear-gradient(135deg,rgba(200,150,62,0.3),rgba(200,150,62,0.1))", border:`1px solid ${stop.port==="At Sea"?"rgba(26,106,170,0.3)":"rgba(200,150,62,0.35)"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
@@ -695,9 +665,6 @@ export default function App() {
               Reservation: <span style={{ color:"#8ab0d4" }}>64629136</span>
             </div>
           </div>
-          <button style={{ ...ghostBtn, width:"100%", padding:13, marginTop:16, fontSize:13 }} onClick={handleLogout}>
-            Sign Out
-          </button>
         </div>
       )}
 
